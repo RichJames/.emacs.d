@@ -1,0 +1,14 @@
+#+Title: My emacs configuration file
+
+This is my emacs configuration.  It is a work in process.  My intent is that the configuration files found here can be pulled to any machine and will work out-of-the-box.
+
+A couple of notable things:
+
+*org-babel*
+I am using org-babel to keep my custom configurations in a separate, settings.org file, which is then tangled by babel into a settings.el file.  My init.el file initiates this process.
+
+*org-mode*
+I use org-mode to help organize my To Do list and Daily Plan list.  So there is a lot of configuration focused on org-mode.  I am still learning how to leverage org-mode more fully, so this is one reason the configuration is a work-in-process.
+
+*org-roam*
+Likewise, I am staring to use org-roam.  It is a fantastic note taking and thinking tool.  I still have some quirks to sort out in this area, but this mostly works.
