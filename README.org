@@ -11,4 +11,4 @@ I am using org-babel to keep my custom configurations in a separate, settings.or
 I use org-mode to help organize my To Do list and Daily Plan list.  So there is a lot of configuration focused on org-mode.  I am still learning how to leverage org-mode more fully, so this is one reason the configuration is a work-in-process.
 
 *org-roam*
-Likewise, I am staring to use org-roam.  It is a fantastic note taking and thinking tool.  I still have some quirks to sort out in this area, but this mostly works.
+Likewise, I am starting to use org-roam.  It is a fantastic note taking and thinking tool.  I still have some quirks to sort out in this area, but this mostly works.
