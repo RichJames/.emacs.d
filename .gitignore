@@ -1,0 +1,21 @@
+# ignore org-roam database
+*.db
+
+# ignore directories
+**/auto-save-list
+**/eshell
+**/elpa
+**/evil
+**/transient
+**/tutorial
+**/url
+
+# ignore specific files
+/bookmarks
+/recentf
+/settings.el
+/.mc-lists.el
+
+# ignore temporary files
+*~
+
