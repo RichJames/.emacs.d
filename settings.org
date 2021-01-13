@@ -1,5 +1,5 @@
 #+TITLE: emacs custom settings via org and babel
-#+PROPERTY: header-args:emacs-lip :tangle ./settings.el
+#+PROPERTY: header-args :tangle yes
 
 * Set up structure templates
 *New*
@@ -18,18 +18,24 @@ We want to re-tangle (i.e. regenerate the settings.el file) each time we save ch
 I am following the guidance in this Youtube video:
 [[https://www.youtube.com/watch?v=kkqVTDbfYp4][Emacs From Scratch #7 - Configure Everything with Org Babel]]
 
-I'm not convinved this is working. I can confirm it doesn't work.  I restarted emacs and it still doesn't automatically tangle the file on save.
-*TO DO:* Need to investigate this.
+#+begin_src emacs-lisp
+  (defun org-babel-tangle-config ()
+     (when (string-equal (buffer-file-name)
+                         (expand-file-name "~/.emacs.d/settings.org"))
+        ;; Dynamic scoping to the rescue
+        (let ((org-confirm-babel-evaluate nil))
+              (org-babel-tangle))))
+
+     (add-hook 'org-mode-hook
+                (lambda ()
+                  (add-hook 'after-save-hook #'org-babel-tangle-config)))
+#+end_src
 
 #+begin_src emacs-lisp
-  (defun efs/org-babel-tangle-config ()
-    (when (string-equal (buffer-file-name)
-                        (expand-file-name "~/init.d/settings.org"))
-      ;; Dynamic scoping to the rescue
-      (let ((org-confirm-babel-evaluate nil))
-        (org-babel-tangle))))
+  (string-equal (expand-file-name "~/.emacs.d/settings.org")
+  (buffer-file-name))
+(buffer-file-name)
 
-  (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'efs/org-babel-tangle-config)))
 #+end_src
 
 * UI tweaks and settings
@@ -257,11 +263,6 @@ Default lisp is SBCL.
 (setq org-startup-indented t)
 #+end_src
 
-** Clean-up & hide emphasis markers
-#+begin_src emacs-lisp
-(setq org-hide-emphasis-markers t)
-#+end_src
-
 ** Org bullets
 #+begin_src emacs-lisp
 (use-package org-bullets
@@ -290,22 +291,12 @@ Default lisp is SBCL.
              ("C-c n x" . org-roam-jump-to-index)))
 #+end_src
 
-** Define key bindings for org-roam
-#+begin_src emacs-lisp
-  ;;(global-set-key (kbd "C-c n r") #'org-roam-buffer-toggle-display)
-  ;;(global-set-key (kbd "C-c n i") #'org-roam-insert)
-  ;;(global-set-key (kbd "C-c n f") #'org-roam-find-file)
-  ;;(global-set-key (kbd "C-c n b") #'org-roam-switch-to-buffer)
-  ;;(global-set-key (kbd "C-c n d") #'org-roam-find-directory)  ;; replaced with binding to Deft (see below)
-  ;;(global-set-key (kbd "C-c n x") #'org-roam-find-index)
-#+end_src
-
 ** Start emacs server
 Not sure if this needs to be here or if I could move it elsewhere in the config and not mess up things.  I want the server to be running to enable the use of org-roam protocol so I can graphically navigate my notes.
 
 #+begin_src emacs-lisp
 (server-start)
-#+end_src_SRC
+#+end_src
 
 ** Org-roam protocol setup
 *** Base configuration
@@ -498,3 +489,16 @@ I don't know if I'll ever need this.  It provides a way to attach notes to a PDF
 #+end_src
 
 
+* Local variables
+This idea came from https://www.reddit.com/r/orgmode/comments/jy8fuc/orgbabeltangle_on_save/.
+
+It is another approach to managing when this file is tangled, rather than only waiting until the next time I start emacs for it to happen.
+
+At the moment, the auto-tangle stuff is working, so I am not using this.
+
+#+begin_src emacs-lisp
+;; Local Variables: 
+;;eval: (add-hook 'after-save-hook (lambda ()(if (y-or-n-p "Reload?")(load-file user-init-file))) nil t) 
+;;eval: (add-hook 'after-save-hook (lambda ()(if (y-or-n-p "Tangle?")(org-babel-tangle))) nil t) 
+;; End:
+#+end_src
