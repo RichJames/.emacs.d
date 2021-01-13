@@ -31,13 +31,6 @@ I am following the guidance in this Youtube video:
                   (add-hook 'after-save-hook #'org-babel-tangle-config)))
 #+end_src
 
-#+begin_src emacs-lisp
-  (string-equal (expand-file-name "~/.emacs.d/settings.org")
-  (buffer-file-name))
-(buffer-file-name)
-
-#+end_src
-
 * UI tweaks and settings
 ** Olivetti
 *New*
