@@ -2,7 +2,6 @@
 #+PROPERTY: header-args :tangle yes
 
 * Set up structure templates
-*New*
 These provide shortcuts to creating code blocks.  Just type
 =<el= and =TAB= and it will expand to a code block for emacs-lisp (in this case).
 
@@ -12,7 +11,6 @@ These provide shortcuts to creating code blocks.  Just type
 (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
 #+end_src
 * Auto tangle config file
-*New*
 We want to re-tangle (i.e. regenerate the settings.el file) each time we save changes to this file.
 
 I am following the guidance in this Youtube video:
@@ -33,7 +31,6 @@ I am following the guidance in this Youtube video:
 
 * UI tweaks and settings
 ** Olivetti
-*New*
 Look and feel for long form writing.
 
 #+begin_src emacs-lisp
@@ -46,8 +43,7 @@ Look and feel for long form writing.
 
 ** Additional tweaking to clean up the UI
 *** Basic tweaks
-*Mostly New*
-All of the below are new settings, except for setting *inihibit-startup-message* to *nil*.
+General tweaks to clean up the UI by removing unecessary toolbars, scrollbars and the like.  I commented out the tooltip setting below as I set it below under the org-roam section.
 
 #+begin_src emacs-lisp
 (setq inhibit-startup-screen t)
@@ -59,7 +55,7 @@ All of the below are new settings, except for setting *inihibit-startup-message*
 (setq pop-up-windows nil)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
-(tooltip-mode nil)
+;; (tooltip-mode nil)
 #+end_src
 
 *** Line cursor and no blink
@@ -146,6 +142,7 @@ See https://github.com/emacsmirror/multiple-cursors for more details.
 
 * Which-key mode
 Which-key causes emacs to display possible completions after you start an emacs command sequence (e.g. C-c).
+
 #+begin_src emacs-lisp
 (use-package which-key
   :ensure t
@@ -169,7 +166,8 @@ However, when three or more windows are open, it starts to become tedious when I
 #+end_src
 
 * Backups and autosaving
-Currently, I have all this commented out.  I was getting errors, so I need to investigate further as to what was going on.
+Currently, I have all this commented out.  I was getting errors.
+*TODO* I need to investigate further as to what was going on.
 
 #+begin_src emacs-lisp
 ;;(setq backup-directory-alist
@@ -240,6 +238,7 @@ Default lisp is SBCL.
 #+end_src
 
 * Magit
+Integrated git support in emacs.
 
 #+begin_src emacs-lisp
   (use-package magit
@@ -250,6 +249,7 @@ Default lisp is SBCL.
 
 * Org Mode
 ** Clean up UI
+
 #+begin_src emacs-lisp
 (add-hook 'org-mode-hook '(lambda () (visual-line-mode 1)))
 (setq org-hide-emphasis-markers t)
@@ -257,6 +257,8 @@ Default lisp is SBCL.
 #+end_src
 
 ** Org bullets
+This converts the asterisks used to denote headings into single character icons to represent those heading levels.
+
 #+begin_src emacs-lisp
 (use-package org-bullets
   :config
@@ -264,6 +266,7 @@ Default lisp is SBCL.
 #+end_src
 
 ** Keyboard shortcuts
+
 #+begin_src emacs-lisp
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a") 'org-agenda)
@@ -272,6 +275,7 @@ Default lisp is SBCL.
 #+end_src
 * Org-Roam
 ** Initialize org-roam global minor mode:
+
 #+begin_src emacs-lisp
   (use-package org-roam
       :ensure t
@@ -285,14 +289,21 @@ Default lisp is SBCL.
 #+end_src
 
 ** Start emacs server
-Not sure if this needs to be here or if I could move it elsewhere in the config and not mess up things.  I want the server to be running to enable the use of org-roam protocol so I can graphically navigate my notes.
+The server needs to be running to enable the use of org-roam protocol so I can graphically navigate my notes.
+
+Rather than start it here, I will rely on starting it as a daemon separately.  So, commenting out this line for now.
 
 #+begin_src emacs-lisp
-(server-start)
+;; (server-start)
 #+end_src
 
 ** Org-roam protocol setup
+Protocol enables writing an org-roam note from a webpage.  This is useful for capturing web content as part of a note.
+
+This also makes it possible to see a clickable graph of my notes, which is handy for seeing the relationships and for navigating/exploring the notes.
+
 *** Base configuration
+
 #+begin_src emacs-lisp
   (setq org-roam-graph-executable "/usr/bin/dot")
   (require 'org-roam-protocol)
@@ -300,7 +311,7 @@ Not sure if this needs to be here or if I could move it elsewhere in the config 
     :ensure t
     :config
     (setq org-roam-server-host "127.0.0.1"
-          org-roam-server-port 8081
+          org-roam-server-port 8085
           org-roam-server-export-inline-images t
           org-roam-server-authentication nil
           org-roam-server-network-poll t
@@ -311,6 +322,7 @@ Not sure if this needs to be here or if I could move it elsewhere in the config 
 #+end_src
 
 *** Firefox and Chrome
+
 #+begin_src emacs-lisp
 (add-to-list 'org-capture-templates
                '("P" "Protocol" entry ; key, name, type
@@ -340,6 +352,7 @@ This was set earlier in the config, so I need to review what was done there and 
 #+end_src
 
 *** Set org-ref variables
+
 #+begin_src emacs-lisp
   (use-package org-ref
    :ensure t
@@ -347,7 +360,7 @@ This was set earlier in the config, so I need to review what was done there and 
     (setq
      org-ref-completion-library 'org-ref-ivy-cite
      org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
-     org-ref-default-bibliography '("~/Bibliography/bibliography.bib")
+     org-ref-default-bibliography '("~/Documents/Bibliography/bibliography.bib")
      org-ref-bibliography-notes "~/org-roam/bibnotes.org"
      org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n :Custom_ID: %k\n :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n :AUTHOR: %9a\n :JOURNAL: %j\n :YEAR: %y\n :VOLUME: %v\n :PAGES: %p\n :DOI: %D\n :URL: %U\n :END:\n\n"
      org-ref-notes-directory "~/org-roam/"
@@ -355,13 +368,14 @@ This was set earlier in the config, so I need to review what was done there and 
 #+end_src
 
 *** Set up bibliography (Helm-bibtex)
+
 #+begin_src emacs-lisp
   (use-package org-roam-bibtex
   :ensure t
   :config
     (setq
      bibtex-completion-notes-path "~/org-roam/"
-     bibtex-completion-bibliography "~/Bibliography/Bibliography.bib"
+     bibtex-completion-bibliography "~/Documents/Bibliography/Bibliography.bib"
      bibtex-completion-pdf-field "file"
      bibtex-completion-notes-template-multiple-files
      (concat
@@ -389,6 +403,8 @@ We are using helm as the completion framework for the below keybinding.  If we d
 
 ** Org-roam bibtex
 I'm a little confused about how I've separated some of the bibtex config here.  In the previous section I ensured org-roam-bibtex was installed.  Seems like I should combine what I did there with what I am doing here.
+
+*TODO* Sort out how I've configured this.
 
 #+begin_src emacs-lisp
   (add-hook 'after-init-hook #'org-roam-bibtex-mode)
@@ -429,6 +445,9 @@ I don't know if I'll ever need this.  It provides a way to attach notes to a PDF
 #+end_src
 
 * Ivy, Counsel & Swiper
+These make for a nice minibuffer navigation and completion experience.
+
+*TODO* Verify if the use-package macro's :bind keyword creates global keys or not.  If so, modify this to use the :bind syntax.
 
 #+begin_src emacs-lisp
 (use-package counsel
@@ -465,6 +484,8 @@ I don't know if I'll ever need this.  It provides a way to attach notes to a PDF
 #+end_src
 
 * Deft
+I need to learn more about using deft.  I've seen it recommended a lot, so decided to install and configure it.
+
 #+begin_src emacs-lisp
 (use-package deft
   :after org
@@ -480,7 +501,6 @@ I don't know if I'll ever need this.  It provides a way to attach notes to a PDF
       (nospace . "-")
       (case-fn . downcase))))
 #+end_src
-
 
 * Local variables
 This idea came from https://www.reddit.com/r/orgmode/comments/jy8fuc/orgbabeltangle_on_save/.
