@@ -10,6 +10,7 @@ These provide shortcuts to creating code blocks.  Just type
 (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
 (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
 #+end_src
+
 * Auto tangle config file
 We want to re-tangle (i.e. regenerate the settings.el file) each time we save changes to this file.
 
@@ -18,11 +19,11 @@ I am following the guidance in this Youtube video:
 
 #+begin_src emacs-lisp
   (defun org-babel-tangle-config ()
-     (when (string-equal (buffer-file-name)
-                         (expand-file-name "~/.emacs.d/settings.org"))
-        ;; Dynamic scoping to the rescue
-        (let ((org-confirm-babel-evaluate nil))
-              (org-babel-tangle))))
+    (when (string-equal (buffer-file-name)
+                        (expand-file-name "~/.emacs.d/settings.org"))
+      ;; Dynamic scoping to the rescue
+      (let ((org-confirm-babel-evaluate nil))
+        (org-babel-tangle))))
 
      (add-hook 'org-mode-hook
                 (lambda ()
@@ -34,7 +35,7 @@ I am following the guidance in this Youtube video:
 Look and feel for long form writing.
 
 #+begin_src emacs-lisp
-(use-package olivetti
+  (use-package olivetti
     :ensure t
     :config
     (setq olivetti-body-width 80)
@@ -59,7 +60,6 @@ General tweaks to clean up the UI by removing unecessary toolbars, scrollbars an
 #+end_src
 
 *** Line cursor and no blink
-*New*
 I'm not sure I am a fan of this; makes it harder to find the cursor,
 #+begin_src emacs-lisp
 (set-default 'cursor-type '(bar . 1))
@@ -67,7 +67,6 @@ I'm not sure I am a fan of this; makes it harder to find the cursor,
 #+end_src
 
 *** Line spacing
-*New*
 This can be 0 for code and 1 or 2 for text (spacing is measured in pixels)
 
 #+begin_src emacs-lisp
@@ -75,7 +74,6 @@ This can be 0 for code and 1 or 2 for text (spacing is measured in pixels)
 #+end_src
 
 *** Underline line at descent position, not baseline position
-*New*
 This is a nice modification.  Underlined text looks more professional with this.
 
 #+begin_src emacs-lisp
@@ -83,12 +81,14 @@ This is a nice modification.  Underlined text looks more professional with this.
 #+end_src
 
 *** Use 2 spaces for auto indent
+
 #+begin_src emacs-lisp
 (setq c-default-style "linux"
       c-basic-offset 2)
 #+end_src
 
 *** Turn on parenthesis highlighting
+
 #+begin_src emacs-lisp
 (setq show-paren-delay 0
       show-paren-style 'parenthesis)
@@ -96,6 +96,7 @@ This is a nice modification.  Underlined text looks more professional with this.
 #+end_src
 
 *** Set column mode to always be on
+
 #+begin_src emacs-lisp
 (setq column-number-mode t)
 #+end_src
@@ -131,8 +132,8 @@ See https://github.com/emacsmirror/multiple-cursors for more details.
 
 #+begin_src emacs-lisp
   (use-package multiple-cursors
-  :ensure t
-  :config
+    :ensure t
+    :config
     (when (fboundp 'mc/edit-lines)
       (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
       (global-set-key (kbd "C->") 'mc/mark-next-like-this)
@@ -163,6 +164,18 @@ However, when three or more windows are open, it starts to become tedious when I
   (other-window -1))
 
 (define-key global-map (kbd "C-x p") 'prev-window)
+#+end_src
+
+** Function to reload a buffer from disk without asking for confirmation
+
+Source: https://emacs.stackexchange.com/questions/169/how-do-i-reload-a-file-in-a-buffer
+
+#+begin_src emacs-lisp
+    (defun revert-buffer-no-confirm ()
+      "Revert buffer without confirmation."
+      (interactive)
+      (revert-buffer :ignore-auto :noconfirm)
+      (message "Buffer is reverted"))
 #+end_src
 
 * Backups and autosaving
@@ -215,12 +228,12 @@ This is the binary name of my scheme implementation
 
 *** Also, enable support for mutliple lisps with slime.
 #+begin_src emacs-lisp
-(setq slime-lisp-implementations
-      '((sbcl ("/usr/bin/sbcl"))
-	(clisp ("/usr/bin/clisp"))))
+  (setq slime-lisp-implementations
+        '((sbcl ("/usr/bin/sbcl"))
+          (clisp ("/usr/bin/clisp"))))
 
-;; Set up global key for slime selector
-(global-set-key (kbd "C-c s") 'slime-selector)
+  ;; Set up global key for slime selector
+  (global-set-key (kbd "C-c s") 'slime-selector)
 #+end_src
 
 ** Common Lisp
@@ -278,14 +291,23 @@ This converts the asterisks used to denote headings into single character icons 
 
 #+begin_src emacs-lisp
   (use-package org-roam
-      :ensure t
-      :config
-         (add-hook 'after-init-hook 'org-roam-mode)
-      :bind (("C-c n r" . org-roam-buffer-toggle-display)
-             ("C-c n i" . org-roam-insert)
-             ("C-c n f" . org-roam-find-file)
-             ("C-c n b" . org-roam-switch-to-buffer)
-             ("C-c n x" . org-roam-jump-to-index)))
+    :ensure t
+    :config
+    (add-hook 'after-init-hook 'org-roam-mode)
+    :bind (("C-c n r" . org-roam-buffer-toggle-display)
+           ("C-c n i" . org-roam-insert)
+           ("C-c n f" . org-roam-find-file)
+           ("C-c n b" . org-roam-switch-to-buffer)
+           ("C-c n x" . org-roam-jump-to-index)))
+#+end_src
+
+** Completion system for org-roam
+I am trying this to see if I like it better than ivy. Ivy provides a completion list in the mini-buffer at the bottom.  The issue is I want to see more items that it displays at once.
+
+On the other hand, helm opens a full buffer with all the choices.  This definitely allows me to see more, but at the cost of temporarily hiding the buffer I was working in.
+
+#+begin_src emacs-lisp
+(setq org-roam-completion-system 'helm)
 #+end_src
 
 ** Start emacs server
@@ -306,6 +328,7 @@ This also makes it possible to see a clickable graph of my notes, which is handy
 
 #+begin_src emacs-lisp
   (setq org-roam-graph-executable "/usr/bin/dot")
+  (require 'org-protocol)
   (require 'org-roam-protocol)
   (use-package org-roam-server
     :ensure t
@@ -319,24 +342,26 @@ This also makes it possible to see a clickable graph of my notes, which is handy
           org-roam-server-network-label-truncate t
           org-roam-server-network-label-truncate-length 60
           org-roam-server-network-label-wrap-length 20))
+
+  (org-roam-server-mode)
 #+end_src
 
 *** Firefox and Chrome
 
 #+begin_src emacs-lisp
-(add-to-list 'org-capture-templates
-               '("P" "Protocol" entry ; key, name, type
+  (add-to-list 'org-capture-templates
+               '("P" "Protocol" entry     ; key, name, type
                  (file+headline +org-capture-notes-file "Inbox") ; target
                  "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?"
-                 :prepend t ; properties
+                 :prepend t               ; properties
                  :kill-buffer t))
                  
-(add-to-list 'org-capture-templates
-             '("L" "Protocol Link" entry
-               (file+headline +org-capture-notes-file "Inbox")
-               "* %? [[%:link][%(transform-square-brackets-to-round-ones \"%:description\")]]\n"
-               :prepend t
-               :kill-buffer t))
+  (add-to-list 'org-capture-templates
+               '("L" "Protocol Link" entry
+                 (file+headline +org-capture-notes-file "Inbox")
+                 "* %? [[%:link][%(transform-square-brackets-to-round-ones \"%:description\")]]\n"
+                 :prepend t
+                 :kill-buffer t))
 #+end_src
 
 * Org-ref and Org-roam-bibtex
@@ -355,8 +380,8 @@ This was set earlier in the config, so I need to review what was done there and 
 
 #+begin_src emacs-lisp
   (use-package org-ref
-   :ensure t
-   :config
+    :ensure t
+    :config
     (setq
      org-ref-completion-library 'org-ref-ivy-cite
      org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
@@ -375,7 +400,7 @@ This was set earlier in the config, so I need to review what was done there and 
   :config
     (setq
      bibtex-completion-notes-path "~/org-roam/"
-     bibtex-completion-bibliography "~/Documents/Bibliography/Bibliography.bib"
+     bibtex-completion-bibliography "~/Documents/Bibliography/bibliography.bib"
      bibtex-completion-pdf-field "file"
      bibtex-completion-notes-template-multiple-files
      (concat
@@ -411,17 +436,17 @@ I'm a little confused about how I've separated some of the bibtex config here.  
   (setq org-roam-bibtex-preformat-keywords
         '("=key=" "title" "url" "file" "author-or-editor" "keywords"))
   (setq orb-templates
-          '(("r" "ref" plain (function org-roam-capture--get-point)
-             ""
-             :file-name "${slug}"
-             :head "#+TITLE: ${=key=}: ${title}\n#+ROAM_KEY: ${ref}
+        '(("r" "ref" plain (function org-roam-capture--get-point)
+           ""
+           :file-name "${slug}"
+           :head "#+TITLE: ${=key=}: ${title}\n#+ROAM_KEY: ${ref}
 
-  - tags ::
-  - keywords :: ${keywords}
+    - tags ::
+    - keywords :: ${keywords}
 
-  \n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
+    \n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
 
-             :unnarrowed t)))
+           :unnarrowed t)))
 
   (define-key org-roam-bibtex-mode-map (kbd "C-c n a") #'orb-note-actions)
 
@@ -435,8 +460,8 @@ I don't know if I'll ever need this.  It provides a way to attach notes to a PDF
 
 #+begin_src emacs-lisp
   (use-package org-noter
-  :ensure t
-  :config 
+    :ensure t
+    :config 
     (setq
      org-noter-notes-window-location 'other-frame
      org-noter-always-create-frame nil
@@ -450,11 +475,11 @@ These make for a nice minibuffer navigation and completion experience.
 *TODO* Verify if the use-package macro's :bind keyword creates global keys or not.  If so, modify this to use the :bind syntax.
 
 #+begin_src emacs-lisp
-(use-package counsel
-  :ensure t)
-(use-package swiper
-  :ensure t
-  :config
+  (use-package counsel
+    :ensure t)
+  (use-package swiper
+    :ensure t
+    :config
     (ivy-mode 1)
     (setq ivy-use-virtual-buffers t)
     (setq enable-recursive-minibuffers t)
@@ -479,39 +504,30 @@ These make for a nice minibuffer navigation and completion experience.
     (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
     )
 
-;; Enable Ivy to allow creation of files with names that partially match existing files
-(setq ivy-use-selectable-prompt t)
+  ;; Enable Ivy to allow creation of files with names that partially match existing files
+  (setq ivy-use-selectable-prompt t)
 #+end_src
 
 * Deft
 I need to learn more about using deft.  I've seen it recommended a lot, so decided to install and configure it.
 
-#+begin_src emacs-lisp
-(use-package deft
-  :after org
-  :bind ("C-c n d" . deft)
-  :custom
-  (deft-recursive t)
-  (deft-use-filename-as-title nil)
-  (deft-use-filter-string-for-filename t)
-  (deft-default-extension "org")
-  (deft-directory "~/org-roam/")
-  (deft-file-naming-rules
-    '((noslash . "-")
-      (nospace . "-")
-      (case-fn . downcase))))
-#+end_src
-
-* Local variables
-This idea came from https://www.reddit.com/r/orgmode/comments/jy8fuc/orgbabeltangle_on_save/.
-
-It is another approach to managing when this file is tangled, rather than only waiting until the next time I start emacs for it to happen.
-
-At the moment, the auto-tangle stuff is working, so I am not using this.
+Documentation on deft is here: https://jblevins.org/projects/deft/.
 
 #+begin_src emacs-lisp
-;; Local Variables: 
-;;eval: (add-hook 'after-save-hook (lambda ()(if (y-or-n-p "Reload?")(load-file user-init-file))) nil t) 
-;;eval: (add-hook 'after-save-hook (lambda ()(if (y-or-n-p "Tangle?")(org-babel-tangle))) nil t) 
-;; End:
+  (use-package deft
+    :ensure t
+    :after org
+    :bind ("C-c n d" . deft)
+    :custom
+    (deft-recursive t)
+    (deft-use-filename-as-title nil)
+    (deft-use-filter-string-for-filename t)
+    (deft-org-mode-title-prefix t)
+    (deft-default-extension "org")
+    (deft-directory "~/org-roam/")
+    (deft-file-naming-rules
+      '((noslash . "-")
+        (nospace . "-")
+        (case-fn . downcase))))
 #+end_src
+
