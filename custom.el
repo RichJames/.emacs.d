@@ -57,7 +57,7 @@
  '(org-startup-indented t)
  '(org-track-ordered-property-with-tag t)
  '(package-selected-packages
-   '(deft paren-face paredit multiple-cursors iedit expand-region counsel swiper ac-js2 js2-mode magit markdown-mode which-key use-package org-bullets)))
+   '(php-mode deft paren-face paredit multiple-cursors iedit expand-region counsel swiper ac-js2 js2-mode magit markdown-mode which-key use-package org-bullets)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

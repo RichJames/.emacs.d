@@ -302,6 +302,7 @@ This converts the asterisks used to denote headings into single character icons 
 #+end_src
 
 ** Completion system for org-roam
+
 I am trying this to see if I like it better than ivy. Ivy provides a completion list in the mini-buffer at the bottom.  The issue is I want to see more items that it displays at once.
 
 On the other hand, helm opens a full buffer with all the choices.  This definitely allows me to see more, but at the cost of temporarily hiding the buffer I was working in.
@@ -311,6 +312,7 @@ On the other hand, helm opens a full buffer with all the choices.  This definite
 #+end_src
 
 ** Start emacs server
+
 The server needs to be running to enable the use of org-roam protocol so I can graphically navigate my notes.
 
 Rather than start it here, I will rely on starting it as a daemon separately.  So, commenting out this line for now.
@@ -320,6 +322,7 @@ Rather than start it here, I will rely on starting it as a daemon separately.  S
 #+end_src
 
 ** Org-roam protocol setup
+
 Protocol enables writing an org-roam note from a webpage.  This is useful for capturing web content as part of a note.
 
 This also makes it possible to see a clickable graph of my notes, which is handy for seeing the relationships and for navigating/exploring the notes.
